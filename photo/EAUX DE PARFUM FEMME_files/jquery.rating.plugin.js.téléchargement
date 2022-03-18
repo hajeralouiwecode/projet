@@ -1,0 +1,104 @@
+/* ------------------------------
+ * PRESTASHOP THEME UNIVERSAL
+ * Copyright (c) Prestacrea
+ * ------------------------------ */
+
+jQuery.fn.rating = function (generalOptions) {
+
+  var $ratings = $(this);
+  $ratings.each(function initRating() {
+    var $ratingComponent = $(this);
+    var options = generalOptions ? generalOptions : {};
+
+    if (!options.grade && $ratingComponent.data('grade'))
+      options.grade = $ratingComponent.data('grade');
+    if (!options.min && $ratingComponent.data('min'))
+      options.min = $ratingComponent.data('min');
+    if (!options.max && $ratingComponent.data('max'))
+      options.max = $ratingComponent.data('max');
+    if (!options.input && $ratingComponent.data('input'))
+      options.input = $ratingComponent.data('input');
+
+    var componentOptions = jQuery.extend({ grade: null, input: null, min: 1, max: 5 }, options);
+    var minValue = Math.min(componentOptions.min, componentOptions.max);
+    var maxValue = Math.max(componentOptions.min, componentOptions.max);
+    var ratingValue = Math.min(componentOptions.grade, maxValue);
+
+    $ratingComponent.html('');
+    $ratingComponent.append('<div class="star-content star-empty d-flex"></div>');
+    $ratingComponent.append('<div class="star-content star-full d-flex"></div>');
+
+    var emptyStars = $('.star-empty', this);
+    var fullStars = $('.star-full', this);
+    var emptyStar = $('<div class="star"><i class="icon-star" aria-hidden="true"></i></div>');
+    var fullStar = $('<div class="star-on"><i class="icon-star" aria-hidden="true"></i></div>');
+
+    var ratingInput;
+    if (componentOptions.input) {
+      ratingInput = $('<input type="number" name="' + componentOptions.input + '" id="' + componentOptions.input + '" />');
+      ratingInput.val(ratingValue);
+      ratingInput.css('display', 'none');
+      ratingInput.change(displayInteractiveGrade);
+      $ratingComponent.append(ratingInput);
+      initInteractiveGrade();
+    } else
+      displayGrade(ratingValue);
+
+    function initInteractiveGrade() {
+      emptyStars.html('');
+      fullStars.html('');
+      var newStar;
+      for (var i = minValue; i <= maxValue; ++i) {
+        newStar = emptyStar.clone();
+        newStar.data('grade', i);
+        newStar.hover(function overStar() {
+          var overIndex = $('.star', fullStars).index($(this));
+          $('.star', fullStars).each(function overStars() {
+            $(this).removeClass('star-on');
+            var starIndex = $('.star', fullStars).index($(this));
+            if (starIndex <= overIndex)
+              $(this).addClass('star-hover pointer');
+            else
+              $(this).removeClass('star-hover pointer');
+          });
+        });
+        newStar.click(function selectGrade() {
+          var selectedGrade = $(this).data('grade');
+          ratingInput.val(selectedGrade);
+        });
+        fullStars.append(newStar);
+      }
+      fullStars.hover(function () { }, displayInteractiveGrade);
+      displayInteractiveGrade();
+    }
+
+    function displayInteractiveGrade() {
+      $('.star', fullStars).each(function displayStar() {
+        var starValue = $(this).data('grade');
+        $(this).removeClass('star-hover pointer');
+        if (starValue <= ratingInput.val())
+          $(this).addClass('star-on');
+        else
+          $(this).removeClass('star-on');
+      });
+    }
+
+    function displayGrade(grade) {
+      emptyStars.html('');
+      fullStars.html('');
+      var newStar;
+      for (var i = minValue; i <= maxValue; ++i) {
+        if (i <= Math.round(grade)) {
+          newStar = emptyStar.clone();
+          newStar.css('display', 'none');
+          emptyStars.append(newStar);
+          fullStars.append(fullStar.clone());
+        } else if (i > Math.round(grade)) {
+          newStar = emptyStar.clone();
+          emptyStars.append(newStar.clone());
+        }
+      }
+    }
+  });
+
+}

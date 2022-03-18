@@ -1,0 +1,50 @@
+/*
+ * 2003-2021 Business Tech
+ *
+ *  @author    Business Tech SARL
+ *  @copyright 2003-2021 Business Tech SARL
+ */
+
+$(document).ready(function () {
+    $(btPixel.btnAddToCart).bind("click", function () {
+        fbq("track", "AddToCart", {
+            content_name: btPixel.tagContent.content_name.value,
+            content_category: btPixel.tagContent.content_category.value,
+            content_ids: btPixel.tagContent.content_ids.value,
+            content_type: btPixel.tagContent.content_type.value,
+            value: btPixel.tagContent.value.value,
+            currency: btPixel.tagContent.currency.value,
+        });
+    });
+
+    $(btPixel.btnAddToWishlist).bind("click", function () {
+        fbq("track", "AddToWishlist", {
+            content_name: btPixel.tagContent.content_name.value,
+            content_category: btPixel.tagContent.content_category.value,
+            content_ids: btPixel.tagContent.content_ids.value,
+            content_type: btPixel.tagContent.content_type.value,
+            value: btPixel.tagContent.value.value,
+            currency: btPixel.tagContent.currency.value,
+        });
+    });
+
+    $(btPixel.btnSub).bind("click", function () {
+        fbq("track", "Subscribe", {
+            content_name: btPixel.tagContent.content_name.value,
+            content_category: btPixel.tagContent.content_category.value,
+            content_ids: btPixel.tagContent.content_ids.value,
+            content_type: btPixel.tagContent.content_type.value,
+            value: btPixel.tagContent.value.value,
+            currency: btPixel.tagContent.currency.value,
+        });
+    });
+
+    $(btPixel.btnOrder).bind("click", function () {
+        fbq('track', 'InitiateCheckout');
+    });
+
+    $("input[name='payment-option']").bind("click", function () {
+        fbq('track', 'AddPaymentInfo');
+    });
+
+});
